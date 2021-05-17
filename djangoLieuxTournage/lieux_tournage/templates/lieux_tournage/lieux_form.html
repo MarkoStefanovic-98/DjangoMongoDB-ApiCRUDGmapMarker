@@ -1,0 +1,39 @@
+{% extends "lieux_tournage/base.html"%}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <div class="container">
+    <form action="" method="post" autocomplete="off">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+        {{form.adresse|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+        {{form.cp|as_crispy_field}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                {{form.lat|as_crispy_field}}
+            </div>
+            <div class="col-md-6">
+                {{form.lng|as_crispy_field}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-outline-success">
+                    Valider
+                </button>
+            </div>
+            <div class="col-md-6 ">
+                <a href="{% url 'lieux_list' %}" class="btn btn-outline-primary">
+                    Revenir
+                </a>
+            </div>
+        </div>
+    </form>
+    </div>
+{% endblock %}

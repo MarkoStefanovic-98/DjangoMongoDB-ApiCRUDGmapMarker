@@ -1,0 +1,36 @@
+{% extends "lieux_tournage/base.html" %}
+{% block content %}
+    <table class="table table-borderless">
+        <thead class="border-bottom font-weight-bold">
+        <tr>
+            <td>Adresse</td>
+            <td>Code Postal</td>
+            <td>Latitude</td>
+            <td>Longitude</td>
+            <td>Parametres</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for lieux in lieux_list %}
+            <tr>
+                <td>{{ lieux.adresse }}</td>
+                <td>{{ lieux.cp }}</td>
+                <td>{{ lieux.lat }}</td>
+                <td>{{ lieux.lng }}</td>
+                <td>
+                    <a href="{% url 'lieux_update' lieux.id %}" class="btn btn-outline-success">
+                Modifier
+                </a>
+                    </a>
+                    <form action ="{% url 'lieux_delete' lieux.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">
+                            Supprimer
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

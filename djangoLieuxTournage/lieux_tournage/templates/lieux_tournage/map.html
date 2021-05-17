@@ -1,0 +1,64 @@
+{% extends "lieux_tournage/base.html" %}
+{% block content %}
+
+    <style type="text/css">
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 500px;
+            /* The height is 400 pixels */
+            width: 70%;
+            /* The width is the width of the web page */
+        }
+    </style>
+    <div class="col-md-3">
+                    {% for c in apilieux %}
+                <tr>
+                    <td>{{c.fields.coord_y}}</td>
+                    <td>{{c.fields.coord_x}}</td>
+                </tr>
+                {% endfor %}
+    </div>
+    <div class="col-md-8">
+        <script>
+            // Initialize and add the map
+            function initMap() {
+                // The location of Uluru
+                const uluru = { lat: 48.856614, lng: 2.3522219};
+                // The map, centered at Uluru
+                const map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 12,
+                    center: uluru,
+                });
+                // The marker, positioned at Uluru
+                {% for lieux in context %}
+                    var lat='{{ lieux.lat }}';
+                    var lng='{{ lieux.lng }}';
+                    var myPpoint = new google.maps.LatLng(lat, lng);
+                    new google.maps.Marker({
+                        position: myPpoint,
+                        map: map,
+                        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                    });
+                    //alert(myPpoint);
+                {% endfor %}
+                {% for c in apilieux %}
+                    var lat='{{c.fields.coord_y}}';
+                    var lng='{{c.fields.coord_x}}';
+                    var myPpoint = new google.maps.LatLng(lat, lng)
+                    new google.maps.Marker({
+                        position: myPpoint,
+                        map: map,
+                        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                    });
+                {% endfor %}
+            }
+            marker.setMap(map);
+        </script>
+        <!--The div element for the map -->
+        <div id="map"></div>
+    </div>
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTSHIKMPr00gLMqbJnQD0fcHkAduwV0R0&callback=initMap&libraries=&v=weekly"
+            async></script>
+{% endblock %}
