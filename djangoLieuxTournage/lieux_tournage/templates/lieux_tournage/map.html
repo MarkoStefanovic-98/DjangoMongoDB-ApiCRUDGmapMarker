@@ -11,7 +11,7 @@
             width: 70%;
             /* The width is the width of the web page */
         }
-                #pano {
+        #pano {
             height: 500px;
             /* The height is 400 pixels */
             width: 70%;
@@ -40,16 +40,18 @@
                     center: uluru,
                 });
 
-const panorama = new google.maps.StreetViewPanorama(
-                document.getElementById("pano"),
-                {
-                    position: uluru,
-                    pov: {
-                        heading: 34,
-                        pitch: 10,
-                    },
-                }
-            );
+                                //function appellée pour afficher la streetView à partir de coordonnées
+            function streetView(myPointStreet){
+                var panorama = new google.maps.StreetViewPanorama(
+                    document.getElementById('streetView'), {
+                        position: myPointStreet,
+                        pov: {
+                            heading: 34,
+                            pitch: 10
+                        }
+                    });
+                map.setStreetView(panorama);
+            }
 
                 {% for lieux in context %}
                     var adresse='{{ lieux.adresse }}';
@@ -64,12 +66,14 @@ const panorama = new google.maps.StreetViewPanorama(
                     });
                     var content = "Adresse: " + adresse +  '</h3> ' + cp
                     var infowindow = new google.maps.InfoWindow();
-                    google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){
+                    google.maps.event.addListener(marker,'click', (function(marker,content,infowindow,myPpoint1){
                         return function() {
                             infowindow.setContent(content);
                             infowindow.open(map, marker);
+                            //appel de la fonction streetView + paramètre pointrecu (newPoint1)
+                            streetView(myPpoint1);
                         }
-                    })(marker,content,infowindow));
+                    })(marker,content,infowindow,myPpoint));
                 {% endfor %}
                 {% for c in apilieux %}
                     var adresse='{{c.fields.adresse_lieu}}';
@@ -83,18 +87,22 @@ const panorama = new google.maps.StreetViewPanorama(
                     });
                     var content = "Adresse: " + adresse +  '</h3> '
                     var infowindow = new google.maps.InfoWindow();
-                    google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){
+                    google.maps.event.addListener(marker,'click', (function(marker,content,infowindow,myPpoint1){
                         return function() {
                             infowindow.setContent(content);
                             infowindow.open(map, marker);
+                            //appel de la fonction streetView + paramètre pointrecu(newPoint1)
+                            streetView(myPpoint1);
                         }
-                    })(marker,content,infowindow));
+
+                    })(marker,content,infowindow,myPpoint));
                 {% endfor %}
-        map.setStreetView(panorama);
+                map.setStreetView(panorama);
             }
         </script>
         <div id="map"></div>
-        <div id="pano"></div>
+        <div id="streetView" class='col-sm-12 col-md-8' style="z-index: 1; width: 100%; height: 400px;"></div>
+
     </div>
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
@@ -103,3 +111,4 @@ const panorama = new google.maps.StreetViewPanorama(
     ></script>
 
 {% endblock %}
+
