@@ -1,64 +1,105 @@
 {% extends "lieux_tournage/base.html" %}
 {% block content %}
 
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <style type="text/css">
-        /* Set the size of the div element that contains the map */
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
         #map {
             height: 500px;
             /* The height is 400 pixels */
             width: 70%;
             /* The width is the width of the web page */
         }
+                #pano {
+            height: 500px;
+            /* The height is 400 pixels */
+            width: 70%;
+            /* The width is the width of the web page */
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
     </style>
     <div class="col-md-3">
-                    {% for c in apilieux %}
-                <tr>
-                    <td>{{c.fields.coord_y}}</td>
-                    <td>{{c.fields.coord_x}}</td>
-                </tr>
-                {% endfor %}
+
     </div>
     <div class="col-md-8">
         <script>
-            // Initialize and add the map
+            // This example displays a marker at the center of Australia.
+            // When the user clicks the marker, an info window opens.
             function initMap() {
-                // The location of Uluru
                 const uluru = { lat: 48.856614, lng: 2.3522219};
-                // The map, centered at Uluru
                 const map = new google.maps.Map(document.getElementById("map"), {
                     zoom: 12,
                     center: uluru,
                 });
-                // The marker, positioned at Uluru
+
+const panorama = new google.maps.StreetViewPanorama(
+                document.getElementById("pano"),
+                {
+                    position: uluru,
+                    pov: {
+                        heading: 34,
+                        pitch: 10,
+                    },
+                }
+            );
+
                 {% for lieux in context %}
+                    var adresse='{{ lieux.adresse }}';
+                    var cp='{{ lieux.cp }}';
                     var lat='{{ lieux.lat }}';
                     var lng='{{ lieux.lng }}';
                     var myPpoint = new google.maps.LatLng(lat, lng);
-                    new google.maps.Marker({
+                    var marker = new google.maps.Marker({
                         position: myPpoint,
-                        map: map,
+                        map,
                         icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
                     });
-                    //alert(myPpoint);
+                    var content = "Adresse: " + adresse +  '</h3> ' + cp
+                    var infowindow = new google.maps.InfoWindow();
+                    google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){
+                        return function() {
+                            infowindow.setContent(content);
+                            infowindow.open(map, marker);
+                        }
+                    })(marker,content,infowindow));
                 {% endfor %}
                 {% for c in apilieux %}
+                    var adresse='{{c.fields.adresse_lieu}}';
                     var lat='{{c.fields.coord_y}}';
                     var lng='{{c.fields.coord_x}}';
-                    var myPpoint = new google.maps.LatLng(lat, lng)
-                    new google.maps.Marker({
+                    var myPpoint = new google.maps.LatLng(lat, lng);
+                    var marker = new google.maps.Marker({
                         position: myPpoint,
-                        map: map,
+                        map,
                         icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
                     });
+                    var content = "Adresse: " + adresse +  '</h3> '
+                    var infowindow = new google.maps.InfoWindow();
+                    google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){
+                        return function() {
+                            infowindow.setContent(content);
+                            infowindow.open(map, marker);
+                        }
+                    })(marker,content,infowindow));
                 {% endfor %}
+        map.setStreetView(panorama);
             }
-            marker.setMap(map);
         </script>
-        <!--The div element for the map -->
         <div id="map"></div>
+        <div id="pano"></div>
     </div>
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTSHIKMPr00gLMqbJnQD0fcHkAduwV0R0&callback=initMap&libraries=&v=weekly"
-            async></script>
+            async
+    ></script>
+
 {% endblock %}
